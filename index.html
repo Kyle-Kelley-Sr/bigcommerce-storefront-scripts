@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Storefront Scripts Demo</title>
+<style>
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #f4f5f7; color: #222; }
+  header { background: #111; color: #fff; padding: 14px 20px; font-weight: 700; }
+  header small { display: block; font-weight: 400; color: #aaa; margin-top: 2px; }
+  main { max-width: 1000px; margin: 0 auto; padding: 20px 16px 40px; display: grid; gap: 20px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+  section { background: #fff; border: 1px solid #e3e5e8; border-radius: 8px; padding: 18px; }
+  h2 { margin: 0 0 12px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #777; }
+  h3 { margin: 4px 0 10px; font-size: 20px; }
+  .price { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  dl { display: grid; grid-template-columns: 110px 1fr; gap: 8px 10px; margin: 0 0 16px; align-items: center; }
+  dt { color: #666; font-size: 14px; }
+  dd { margin: 0; font-size: 14px; }
+  .productView-brand a { color: #222; text-decoration: none; font-weight: 600; }
+  .form-action button { width: 100%; padding: 12px; border: 0; border-radius: 6px; background: #d62828; color: #fff; font-weight: 700; font-size: 15px; }
+  .cart-item { padding: 12px 0; border-bottom: 1px solid #eee; }
+  .cart-item:last-child { border-bottom: 0; }
+  .product-title { margin: 0; font-size: 15px; font-weight: 600; }
+  .switcher { margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .switcher button { border: 1px solid #ccc; background: #fff; border-radius: 4px; padding: 5px 9px; font-size: 13px; cursor: pointer; }
+  .switcher button.on { background: #111; color: #fff; border-color: #111; }
+  .note { grid-column: 1 / -1; font-size: 13px; color: #666; }
+</style>
+</head>
+<body>
+<header>Storefront Scripts Demo<small>Sample store, sample products. All brands and logos are placeholders.</small></header>
+<main>
+  <section>
+    <h2>Product page</h2>
+    <div class="switcher" id="switcher">
+      <button data-a="In Stock" class="on">In Stock</button>
+      <button data-a="Only 2 left in stock!">Limited</button>
+      <button data-a="Currently Out of Stock">Out of stock</button>
+      <button data-a="Ships Direct - usually 3-5 business days">Ships direct</button>
+    </div>
+    <div class="productView-brand"><a href="#">Example Brand A</a></div>
+    <h3>Sample Billet Fuel Pump Bracket</h3>
+    <div class="price">$89.99</div>
+    <dl>
+      <dt class="productView-info-name">SKU:</dt><dd class="productView-info-value">DEMO-1001</dd>
+      <dt class="productView-info-name">Availability:</dt><dd class="productView-info-value" id="avail">In Stock</dd>
+    </dl>
+    <div class="form-action"><button id="form-action-addToCart" type="button">Add to Cart</button></div>
+  </section>
+
+  <section>
+    <h2>Cart</h2>
+    <div class="cart-item"><p class="product-title" data-test="cart-item-product-title">Sample Rod End, 3/4" Steel</p></div>
+    <div class="cart-item"><p class="product-title" data-test="cart-item-product-title">Sample Electric Fuel Pump</p></div>
+    <div class="cart-item"><p class="product-title" data-test="cart-item-product-title">Sample Custom Wheel Set</p></div>
+  </section>
+
+  <p class="note">The product-page script runs once on page load, so the switcher reloads the page with the chosen Availability text. The cart badges read from a mocked cart, the same way the live script reads the BigCommerce Storefront Cart API.</p>
+</main>
+
+<script>
+  // Availability switcher (reloads so the product-page script runs fresh)
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var a = params.get('avail');
+    if (a) {
+      document.getElementById('avail').textContent = a;
+      document.querySelectorAll('#switcher button').forEach(function (b) { b.classList.toggle('on', b.dataset.a === a); });
+    }
+    document.getElementById('switcher').addEventListener('click', function (e) {
+      if (e.target.dataset.a) location.search = '?avail=' + encodeURIComponent(e.target.dataset.a);
+    });
+  })();
+
+  // Mock the BigCommerce Storefront Cart API and product pages
+  (function () {
+    var products = {
+      '/demo/rod-end':  { name: 'Sample Rod End, 3/4" Steel', brand: 'Example Brand B', avail: 'In Stock' },
+      '/demo/pump':     { name: 'Sample Electric Fuel Pump',   brand: 'Example Brand C', avail: 'Ships Direct - usually 1-2 business days' },
+      '/demo/wheels':   { name: 'Sample Custom Wheel Set',     brand: 'Example Brand A', avail: 'Ships Direct - built to order, 3-4 weeks' }
+    };
+    var realFetch = window.fetch;
+    window.fetch = function (url, opts) {
+      if (url === '/api/storefront/carts') {
+        var items = Object.keys(products).map(function (u) {
+          return { name: products[u].name, brand: products[u].brand, url: u };
+        });
+        return Promise.resolve(new Response(JSON.stringify([{ lineItems: { physicalItems: items } }])));
+      }
+      if (products[url]) {
+        var html = '<dl><dt class="productView-info-name">Availability:</dt><dd class="productView-info-value">' +
+                   products[url].avail + '</dd></dl>';
+        return Promise.resolve(new Response(html));
+      }
+      return realFetch.apply(this, arguments);
+    };
+  })();
+</script>
+<script>
+  // Point the placeholder logo URLs at inline sample logos for the demo
+  (function () {
+    function logo(text, color) {
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="80"><rect width="240" height="80" rx="8" fill="' + color + '"/>' +
+        '<text x="120" y="50" font-family="Arial" font-size="26" font-weight="700" fill="#fff" text-anchor="middle">' + text + '</text></svg>';
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+    window.__demoLogos = { a: logo('BRAND A', '#1f4e79'), b: logo('BRAND B', '#7a1f1f'), c: logo('BRAND C', '#2f5d34') };
+  })();
+</script>
+<script src="../scripts/promo-code-banner.js"></script>
+<script>
+  // Swap the demo logos into the product-page script's settings by patching its URLs after load
+  document.addEventListener('DOMContentLoaded', function () {
+    var map = {
+      'https://example.com/images/brand-a-logo.png': window.__demoLogos.a,
+      'https://example.com/images/brand-b-logo.png': window.__demoLogos.b,
+      'https://example.com/images/brand-c-logo.jpg': window.__demoLogos.c
+    };
+    var fix = function () {
+      document.querySelectorAll('img').forEach(function (img) {
+        var src = img.getAttribute('src');
+        if (map[src]) img.setAttribute('src', map[src]);
+      });
+    };
+    setTimeout(fix, 0); setTimeout(fix, 600);
+  });
+</script>
+<script src="../scripts/product-page-brand-logos-and-stock-badges.js"></script>
+<script src="../scripts/cart-checkout-shipping-badges.js"></script>
+</body>
+</html>
