@@ -2,7 +2,7 @@
 
 Three drop-in scripts I wrote for a BigCommerce store that sells race car parts. They tell customers when an item will actually ship, show brand logos in place of plain brand names, and let customers copy a promo code with one tap.
 
-![Demo: product page with brand logo, ships-direct badge and promo banner; cart with in-stock countdown, ships-direct and built-to-order badges](docs/demo.png)
+![Demo: product page with brand logo, ships-direct badge and promo banner; cart with in-stock countdown, ships-direct and built-to-order badges](demo.png)
 
 *Screenshot from the included demo page. All brands, products and logos are placeholders.*
 
@@ -16,9 +16,9 @@ Three drop-in scripts I wrote for a BigCommerce store that sells race car parts.
 
 | Script | What it does |
 | --- | --- |
-| [`cart-checkout-shipping-badges.js`](scripts/cart-checkout-shipping-badges.js) | Adds a badge under every cart and checkout item: **In Stock – Ships Today** with a live countdown to the same-day cutoff, **Ships Direct from &lt;Brand&gt;** with the expected timing, or **Built to Order** with the lead time. Uses the shop's time zone, skips weekends and holidays, and refreshes every 20 seconds. |
-| [`product-page-brand-logos-and-stock-badges.js`](scripts/product-page-brand-logos-and-stock-badges.js) | Replaces the brand name with the brand's logo and turns the Availability text into a colored badge (In Stock, Limited Stock, Out of Stock, Ships Direct). Limited stock hides the exact count. |
-| [`promo-code-banner.js`](scripts/promo-code-banner.js) | Animated promo banner above Add to Cart and at checkout. One tap copies the code; at checkout it also opens the coupon field and fills it in. |
+| [`cart-checkout-shipping-badges.js`](cart-checkout-shipping-badges.js) | Adds a badge under every cart and checkout item: **In Stock – Ships Today** with a live countdown to the same-day cutoff, **Ships Direct from &lt;Brand&gt;** with the expected timing, or **Built to Order** with the lead time. Uses the shop's time zone, skips weekends and holidays, and refreshes every 20 seconds. |
+| [`product-page-brand-logos-and-stock-badges.js`](product-page-brand-logos-and-stock-badges.js) | Replaces the brand name with the brand's logo and turns the Availability text into a colored badge (In Stock, Limited Stock, Out of Stock, Ships Direct). Limited stock hides the exact count. |
+| [`promo-code-banner.js`](promo-code-banner.js) | Animated promo banner above Add to Cart and at checkout. One tap copies the code; at checkout it also opens the coupon field and fills it in. |
 
 ## How the shipping badges work
 
@@ -40,7 +40,7 @@ Tested on a Stencil theme with BigCommerce's Optimized One-Page Checkout. Other 
 
 ## Try the demo
 
-Open [`demo/index.html`](demo/index.html) through any local web server (for example `python3 -m http.server`, then visit `http://localhost:8000/demo/`). The demo mocks the cart API and product pages so the scripts run without a store.
+Open [`index.html`](index.html) through any local web server (for example `python3 -m http.server`, then visit `http://localhost:8000/`). The demo mocks the cart API and product pages so the scripts run without a store.
 
 ## Built with
 
