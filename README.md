@@ -6,6 +6,8 @@ Three drop-in scripts I wrote for a BigCommerce store that sells race car parts.
 
 *Screenshot from the included demo page. All brands, products and logos are placeholders.*
 
+   **[Try the live demo →](https://kyle-kelley-sr.github.io/bigcommerce-storefront-scripts/)**
+
 ## The problems
 
 - **Customers didn't know when orders would arrive.** The store sells parts from its own shelves, parts that ship directly from the manufacturer, and parts that are built to order. Before checkout, all three looked the same.
