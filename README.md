@@ -44,6 +44,22 @@ Tested on a Stencil theme with BigCommerce's Optimized One-Page Checkout. Other 
 
 Open [`index.html`](index.html) through any local web server (for example `python3 -m http.server`, then visit `http://localhost:8000/`). The demo mocks the cart API and product pages so the scripts run without a store.
 
+## More scripts: product page promise strip
+
+Three more scripts that answer the questions shoppers usually call about, right on the product page.
+
+![Demo: American Made badge, then a strip of tiles with a ships-today countdown, bundle saving, specs and fitment, and built in-house](product-page-demo.png)
+
+**[Try the product page demo →](https://kyle-kelley-sr.github.io/bigcommerce-storefront-scripts/product-page-demo.html)**
+
+| Script | What it does |
+| --- | --- |
+| [`promise-strip.js`](promise-strip.js) | Row of tiles by the price: **Ships Today** with a live countdown to the 2 PM Central cutoff (skips weekends and holidays), or **Ships Direct** for dropship items; **Specs & Fitment** opens the description and scrolls to it; **Built In-House** on the shop's own SKUs; **Bundle Deal** on listed products. |
+| [`bundle-deal-options.js`](bundle-deal-options.js) | Highlights add-on options that carry a bundle discount: pulsing outline, "Save $X" ribbon, was/now price, and a green "savings applied" state once picked. The promise strip reads the saving from it, so the price is set in one place. |
+| [`made-in-usa-badge.js`](made-in-usa-badge.js) | Puts an "American Made" badge in the theme's banner slot on listed products only. Matches by URL first so it appears without flicker, then by product ID or SKU. |
+
+Tiles work from the keyboard, and animations stop for shoppers who turn on reduced motion. Setup is the same as above: Script Manager, Footer, Store pages, then edit the settings block at the top of each file. The real bundle discount is set in BigCommerce (an option price adjustment or a cart rule); the script only displays it.
+
 ## Built with
 
 JavaScript (no libraries), BigCommerce Script Manager and the Storefront Cart API. Built with AI assistance: I defined the requirements and edge cases, tested on the live store, and maintain the scripts.
